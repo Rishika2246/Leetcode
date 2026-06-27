@@ -1,12 +1,20 @@
 import os
 import re
 
-for folder in os.listdir("."):
+# Rename folders like:
+# 1-two-sum -> 0001-two-sum
+# 18-4sum -> 0018-4sum
+# 181-employees -> 0181-employees
 
-    if not os.path.isdir(folder):
+for item in os.listdir("."):
+    if not os.path.isdir(item):
         continue
 
-    match = re.match(r"^(\d+)-(.*)", folder)
+    # Skip hidden folders like .git and .github
+    if item.startswith("."):
+        continue
+
+    match = re.match(r"^(\d+)-(.*)$", item)
 
     if not match:
         continue
@@ -16,6 +24,6 @@ for folder in os.listdir("."):
 
     new_name = f"{number:04d}-{title}"
 
-    if folder != new_name:
-        print(f"{folder} -> {new_name}")
-        os.rename(folder, new_name)
+    if item != new_name:
+        print(f"Renaming: {item} -> {new_name}")
+        os.rename(item, new_name)
