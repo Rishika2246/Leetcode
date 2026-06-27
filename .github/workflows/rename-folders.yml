@@ -10,13 +10,13 @@ permissions:
 
 jobs:
   rename:
-    # Don't run on commits created by this workflow
+    # Prevent infinite loop on commits created by this workflow
     if: "!contains(github.event.head_commit.message, '[skip ci]')"
 
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 2
@@ -30,25 +30,25 @@ jobs:
       - name: Rename folders
         run: python rename.py
 
-      - name: Commit renamed folders
+      - name: Commit changes
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           git add -A
 
           if git diff --cached --quiet; then
-            echo "No changes detected."
+            echo "No changes to commit."
             exit 0
           fi
 
-          # Get the commit message that triggered this workflow
-          PREVIOUS_COMMIT_MESSAGE=$(git log -1 --pretty=%B)
+          # Get the previous commit message
+          COMMIT_MSG=$(git log -1 --pretty=%B)
 
           echo "Using commit message:"
-          echo "$PREVIOUS_COMMIT_MESSAGE"
+          echo "$COMMIT_MSG"
 
           # Commit using the same message
-          git commit -m "${PREVIOUS_COMMIT_MESSAGE} [skip ci]"
+          git commit -m "${COMMIT_MSG} [skip ci]"
 
           git push
