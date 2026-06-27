@@ -1,13 +1,18 @@
 import os
 import re
 
-PADDING = 4
+print("Current directory:", os.getcwd())
+print("Contents:")
+
+for item in os.listdir("."):
+    print("-", item)
+
+print("\nRenaming...")
 
 for item in os.listdir("."):
     if not os.path.isdir(item):
         continue
 
-    # Skip hidden folders
     if item.startswith("."):
         continue
 
@@ -19,8 +24,11 @@ for item in os.listdir("."):
     number = int(match.group(1))
     title = match.group(2)
 
-    new_name = f"{number:0{PADDING}d}-{title}"
+    new_name = f"{number:04d}-{title}"
+
+    print(f"{item} -> {new_name}")
 
     if item != new_name:
-        print(f"{item} -> {new_name}")
         os.rename(item, new_name)
+
+print("Done.")
